@@ -1,0 +1,31 @@
+{
+  "template": "https://github.com/radix-ai/poetry-cookiecutter",
+  "commit": "3234dfa57986d20ca428bdc9e7e88e8887797c5d",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "package_name": "py-ductus",
+      "package_description": "A python package to process data trough multiple steps in a declarative pipeline; inspired by XProc.",
+      "package_url": "https://github.com/Bpolitycki/py-ductus",
+      "author_name": "Bastian Politycki",
+      "author_email": "bastian.politycki@unisg.ch",
+      "python_version": "3.11",
+      "development_environment": "simple",
+      "with_conventional_commits": "0",
+      "with_fastapi_api": "0",
+      "with_jupyter_lab": "0",
+      "with_pydantic_typing": "0",
+      "with_sentry_logging": "0",
+      "with_streamlit_app": "0",
+      "with_typer_cli": "0",
+      "continuous_integration": "GitHub",
+      "docstring_style": "Google",
+      "private_package_repository_name": "",
+      "private_package_repository_url": "",
+      "__package_name_kebab_case": "py-ductus",
+      "__package_name_snake_case": "py_ductus",
+      "_template": "https://github.com/radix-ai/poetry-cookiecutter"
+    }
+  },
+  "directory": null
+}
