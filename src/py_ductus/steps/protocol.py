@@ -1,12 +1,12 @@
 from abc import abstractmethod  # noqa: D100
 from collections.abc import Iterable
-from typing import Protocol, runtime_checkable
+from typing import Generic, Protocol, runtime_checkable
 
 from py_ductus.common import types
 
 
 @runtime_checkable
-class Step(Protocol):
+class Step(Protocol, Generic[types.TContent]):
     """Protocol for Steps in a pipeline.
 
     Steps are a single unit in a processing pipeline,
@@ -16,17 +16,17 @@ class Step(Protocol):
     _name: str
 
     @abstractmethod
-    def __call__(self, values: Iterable[types.T]) -> Iterable[types.T]:
+    def __call__(self, values: Iterable[types.TContent]) -> Iterable[types.TContent]:
         """The call method of the step.
 
         A step is a callable that takes iterable of (generic) values of type T
         and returns the processed values as an iterable.
 
         Args:
-            values (Iterable[T]): The values to process.
+            values (Iterable[TContent]): The values to process.
 
         Returns:
-            Iterable[T]: The processed values.
+            Iterable[TContent]: The processed values.
 
         Raises:
             StepError: When the step fails processing.

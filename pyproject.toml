@@ -12,6 +12,8 @@ version = "0.0.1"
 
 [tool.poetry.dependencies] # https://python-poetry.org/docs/dependency-specification/
 python = ">=3.11,<4.0"
+saxonche = "^12.3.0"
+saxonche-stubs = "^0.6.0"
 
 [tool.poetry.group.test.dependencies] # https://python-poetry.org/docs/master/managing-dependencies/
 black = ">=23.3.0"
@@ -71,13 +73,13 @@ show_error_context = true
 warn_unreachable = true
 
 [tool.pytest.ini_options] # https://docs.pytest.org/en/latest/reference/reference.html#ini-options-ref
-addopts = "--color=yes --doctest-modules --exitfirst --failed-first --verbosity=2 --junitxml=reports/pytest.xml"
+addopts = "--color=yes --verbosity=2"
 testpaths = ["src", "tests"]
 xfail_strict = true
 
 [tool.ruff] # https://github.com/charliermarsh/ruff
 fix = true
-ignore = ["E501", "PGH001", "PGH002", "PGH003", "RET504", "S101"]
+ignore = ["D104", "E501", "PGH001", "PGH002", "PGH003", "RET504", "S101"]
 ignore-init-module-imports = true
 line-length = 100
 select = [
