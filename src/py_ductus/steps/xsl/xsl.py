@@ -1,5 +1,5 @@
 """Module for the XSL step."""
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from pathlib import Path
 
 from saxonche import PySaxonProcessor, PyXslt30Processor, PyXsltExecutable
@@ -17,10 +17,16 @@ class XSL:
     """
 
     _name: str = "xsl"
+    dynamic_params: Callable[[], XSLParam] | list[Callable[..., XSLParam]] | None
     proc_params: XSLParam | list[XSLParam] | None
     xslt: str | Path
 
-    def __init__(self, xslt: str | Path, params: XSLParam | list[XSLParam] | None = None):
+    def __init__(
+        self,
+        xslt: str | Path,
+        params: XSLParam | list[XSLParam] | None = None,
+        dynamic_params: Callable[[], XSLParam] | list[Callable[[], XSLParam]] | None = None,
+    ):
         """Initialize a XSL step.
 
         Initialize a XSL step with the stylesheet and parameters.
@@ -28,9 +34,11 @@ class XSL:
         Args:
             xslt (str | Path): The XSL stylesheet.
             params (XSLParam | list[XSLParam] | None): The parameters for the XSL transformation.
+            dynamic_params (Callable[[], XSLParam] | list[Callable[[], XSLParam]] | None): Dynamic parameters for the XSL transformation, which are evaluated for each input value.
         """
         self.xslt = xslt
         self.proc_params = params
+        self.dynamic_params = dynamic_params
 
     def __call__(self, values: Iterable[str]) -> Iterable[str]:
         """Apply the XSL transformation to the input values.
@@ -72,9 +80,21 @@ class XSL:
         else:
             self.proc_params.apply_param(proc, xsl_proc)
 
+    def _apply_dynamic_params(self, proc: PySaxonProcessor, xsl_proc: PyXslt30Processor) -> None:
+        if self.dynamic_params is None:
+            return
+
+        if isinstance(self.dynamic_params, list):
+            for param in self.dynamic_params:
+                param().apply_param(proc, xsl_proc)
+        else:
+            self.dynamic_params().apply_param(proc, xsl_proc)
+
     def _apply_xslt(
         self, input_value: str, proc: PySaxonProcessor, xsl_exec: PyXsltExecutable
     ) -> str:
+        self._apply_dynamic_params(proc=proc, xsl_proc=xsl_exec)
+
         result: str | None = xsl_exec.transform_to_string(
             xdm_node=proc.parse_xml(xml_text=input_value)
         )

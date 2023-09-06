@@ -27,6 +27,7 @@ def test_if_atomic_convert_returns_xdm_atomic(input_value: str | bool | int | fl
     test_type = xsl.XSLAtomicParam(value=input_value, name="test")
     proc = PySaxonProcessor()
     assert isinstance(test_type.convert_to_saxon(proc), PyXdmAtomicValue)
+    assert isinstance(test_type, xsl.XSLParam)
 
 
 def test_if_unsupported_atomic_convert_raises_error():

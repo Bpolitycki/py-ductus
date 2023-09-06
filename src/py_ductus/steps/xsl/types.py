@@ -1,7 +1,7 @@
 """Param types for XSL steps."""
 
 from builtins import bool, float
-from typing import Protocol, Self, runtime_checkable
+from typing import Generic, Protocol, TypeVar, runtime_checkable
 
 from saxonche import (
     PySaxonProcessor,
@@ -14,18 +14,21 @@ from saxonche import (
 
 AtomicType = str | int | float | bool
 
+TXdmValue_co = TypeVar("TXdmValue_co", PyXdmAtomicValue, PyXdmArray, PyXdmMap, covariant=True)
+TAtomic = TypeVar("TAtomic", AtomicType, list[AtomicType], dict[str, AtomicType | list[AtomicType]])
+
 
 @runtime_checkable
-class XSLParam(Protocol):
+class XSLParam(Protocol, Generic[TXdmValue_co, TAtomic]):
     """Protocol for XSL Parameters."""
 
     name: str | None
-    value: Self | list[AtomicType] | dict[str, AtomicType | list[AtomicType]]
+    value: TAtomic
 
     def __init__(
         self,
         name: str | None,
-        value: AtomicType | list[AtomicType] | dict[str, AtomicType | list[AtomicType]],
+        value: TAtomic,
     ) -> None:
         """Initialize a XSLParam.
 
@@ -35,7 +38,7 @@ class XSLParam(Protocol):
         """
         ...
 
-    def convert_to_saxon(self, proc: PySaxonProcessor) -> PyXdmAtomicValue | PyXdmArray | PyXdmMap:
+    def convert_to_saxon(self, proc: PySaxonProcessor) -> TXdmValue_co:
         """Convert the parameter to a Saxon parameter.
 
         Raises:

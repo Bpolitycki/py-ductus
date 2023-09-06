@@ -58,3 +58,26 @@ def xml_xsl_sample(tmp_path: Path) -> tuple[str, str, Path]:
         f.write(xsl)
 
     return xml, xsl, tmp_path / "identity.xsl"
+
+
+@pytest.fixture()
+def xml_xsl_sample_with_params(tmp_path: Path) -> tuple[str, str, Path]:
+    """Return a sample XML and XSL file with params."""
+    xsl = """
+    <!-- identity.xsl -->
+<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:param name="param1" select="'default1'"/>
+    <!-- Identity template -->
+    <xsl:template match="/">
+        <root>
+            <xsl:value-of select="$param1"/>
+        </root>
+    </xsl:template>
+</xsl:stylesheet>
+    """
+
+    xml = """<?xml version="1.0" encoding="UTF-8"?><foo>bar</foo>"""
+    with open(tmp_path / "with_params.xsl", "w") as f:
+        f.write(xsl)
+
+    return xml, xsl, tmp_path / "with_params.xsl"

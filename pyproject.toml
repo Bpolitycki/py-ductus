@@ -8,7 +8,7 @@ description = "A python package to process data trough multiple steps in a decla
 name = "py-ductus"
 readme = "README.md"
 repository = "https://github.com/Bpolitycki/py-ductus"
-version = "0.0.1"
+version = "0.0.2"
 
 [tool.poetry.dependencies] # https://python-poetry.org/docs/dependency-specification/
 python = ">=3.11,<4.0"
