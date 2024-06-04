@@ -1,4 +1,5 @@
 """Test the XSL types."""
+
 import pytest
 from saxonche import PySaxonProcessor, PyXdmArray, PyXdmAtomicValue
 
@@ -56,7 +57,7 @@ def test_if_array_is_valid_type():
 @pytest.mark.parametrize(
     "input_value",
     [
-        ["test"],
+        ["test", "tester"],
         [1],
         [1.0],
         [True],

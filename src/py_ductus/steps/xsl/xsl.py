@@ -1,11 +1,12 @@
 """Module for the XSL step."""
+
 from collections.abc import Callable, Iterable
 from pathlib import Path
 
 from saxonche import PySaxonProcessor, PyXslt30Processor, PyXsltExecutable
 
 from py_ductus.steps.error import StepError
-from py_ductus.steps.xsl.types import XSLParam
+from py_ductus.steps.xsl.types import XSLAtomicParam, XSLParam
 
 AtomicType = str | int | float | bool
 
@@ -17,7 +18,7 @@ class XSL:
     """
 
     _name: str = "xsl"
-    dynamic_params: Callable[[], XSLParam] | list[Callable[..., XSLParam]] | None
+    dynamic_params: Callable[[], XSLAtomicParam] | list[Callable[..., XSLAtomicParam]] | None
     proc_params: XSLParam | list[XSLParam] | None
     xslt: str | Path
 
@@ -25,7 +26,9 @@ class XSL:
         self,
         xslt: str | Path,
         params: XSLParam | list[XSLParam] | None = None,
-        dynamic_params: Callable[[], XSLParam] | list[Callable[[], XSLParam]] | None = None,
+        dynamic_params: (
+            Callable[[], XSLAtomicParam] | list[Callable[[], XSLAtomicParam]] | None
+        ) = None,
     ):
         """Initialize a XSL step.
 
@@ -34,7 +37,7 @@ class XSL:
         Args:
             xslt (str | Path): The XSL stylesheet.
             params (XSLParam | list[XSLParam] | None): The parameters for the XSL transformation.
-            dynamic_params (Callable[[], XSLParam] | list[Callable[[], XSLParam]] | None): Dynamic parameters for the XSL transformation, which are evaluated for each input value.
+            dynamic_params (Callable[[], XslAtomicParam] | list[Callable[[], XslAtomicParam]] | None): Dynamic parameters for the XSL transformation, which are evaluated for each input value.
         """
         self.xslt = xslt
         self.proc_params = params
@@ -57,7 +60,11 @@ class XSL:
 
             self._apply_params(proc=proc, xsl_proc=xsl_proc)
 
-            xslt_executable: PyXsltExecutable = xsl_proc.compile_stylesheet(stylesheet_text=self.xslt) if isinstance(self.xslt, str) else xsl_proc.compile_stylesheet(stylesheet_file=str(self.xslt))  # type: ignore
+            xslt_executable: PyXsltExecutable = (
+                xsl_proc.compile_stylesheet(stylesheet_text=self.xslt)
+                if isinstance(self.xslt, str)
+                else xsl_proc.compile_stylesheet(stylesheet_file=str(self.xslt))
+            )  # type: ignore
 
             result: str | list[str]
             if isinstance(values, str):
@@ -93,9 +100,9 @@ class XSL:
     def _apply_xslt(
         self, input_value: str, proc: PySaxonProcessor, xsl_exec: PyXsltExecutable
     ) -> str:
-        self._apply_dynamic_params(proc=proc, xsl_proc=xsl_exec)
+        self._apply_dynamic_params(proc=proc, xsl_proc=xsl_exec)  # type: ignore
 
-        result: str | None = xsl_exec.transform_to_string(
+        result: str | None = xsl_exec.transform_to_string(  # type: ignore
             xdm_node=proc.parse_xml(xml_text=input_value)
         )
 

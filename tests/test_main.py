@@ -1,4 +1,5 @@
 """Test the main.py file."""
+
 from pathlib import Path
 
 from py_ductus.main import process

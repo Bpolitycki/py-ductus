@@ -1,6 +1,5 @@
 """Test the step protocol using fake steps."""
 
-
 from py_ductus.steps.protocol import Step
 from tests.conftest import InvalidFakeStep, ValidFakeStep
 

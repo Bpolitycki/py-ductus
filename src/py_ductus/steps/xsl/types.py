@@ -8,6 +8,7 @@ from saxonche import (
     PyXdmArray,
     PyXdmAtomicValue,
     PyXdmMap,
+    PyXdmValue,
     PyXslt30Processor,
     create_xdm_dict,
 )
@@ -63,7 +64,7 @@ class XSLAtomicParam:
     """A (saxon) XSL Atomic Parameter."""
 
     name: str | None
-    value: AtomicType
+    value: AtomicType | PyXdmValue
 
     def __init__(self, name: str | None, value: AtomicType) -> None:
         """Initialize a XSLAtomicParam.
@@ -75,7 +76,7 @@ class XSLAtomicParam:
         self.name = name
         self.value = value
 
-    def convert_to_saxon(self, proc: PySaxonProcessor) -> PyXdmAtomicValue:
+    def convert_to_saxon(self, proc: PySaxonProcessor) -> PyXdmAtomicValue | PyXdmValue:
         """Convert the parameter to a Saxon parameter.
 
         Raises:
@@ -85,16 +86,16 @@ class XSLAtomicParam:
             PyXdmAtomicValue: The Saxon parameter.
         """
         if isinstance(self.value, str):
-            converted_value = proc.make_string_value(self.value)
-        elif isinstance(self.value, int):
-            converted_value = proc.make_integer_value(self.value)
-        elif isinstance(self.value, bool):
-            converted_value = proc.make_boolean_value(self.value)
-        elif isinstance(self.value, float):
-            converted_value = proc.make_float_value(self.value)  # type: ignore
-        else:
-            raise TypeError(f"Unsupported type {type(self.value)}")
-        return converted_value
+            return proc.make_string_value(self.value)
+        if isinstance(self.value, int):
+            return proc.make_integer_value(self.value)
+        if isinstance(self.value, bool):
+            return proc.make_boolean_value(self.value)
+        if isinstance(self.value, float):
+            return proc.make_float_value(self.value)  # type: ignore
+        if isinstance(self.value, PyXdmValue):
+            return self.value
+        raise TypeError(f"Unsupported type {type(self.value)}")
 
     def apply_param(self, proc: PySaxonProcessor, xsl_proc: PyXslt30Processor) -> None:
         """Apply the parameter to the processor.
@@ -176,9 +177,11 @@ class XSLMapParam:
         xdm_data_dict = create_xdm_dict(
             proc,
             {
-                key: XSLArrayParam(value=value, name=None).convert_to_saxon(proc=proc)
-                if isinstance(value, list)
-                else XSLAtomicParam(value=value, name=None).convert_to_saxon(proc=proc)
+                key: (
+                    XSLArrayParam(value=value, name=None).convert_to_saxon(proc=proc)
+                    if isinstance(value, list)
+                    else XSLAtomicParam(value=value, name=None).convert_to_saxon(proc=proc)
+                )
                 for key, value in self.value.items()
             },
         )

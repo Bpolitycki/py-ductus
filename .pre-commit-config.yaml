@@ -51,9 +51,10 @@ repos:
         require_serial: true
         language: system
         types: [python]
-      - id: black
-        name: black
-        entry: black
+      - id: ruff-fmt
+        name: ruff
+        entry: ruff
+        args: ["format"]
         require_serial: true
         language: system
         types: [python]
