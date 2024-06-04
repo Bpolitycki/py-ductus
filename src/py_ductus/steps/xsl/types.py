@@ -60,7 +60,7 @@ class XSLParam(Protocol, Generic[TXdmValue_co, TAtomic]):
         ...
 
 
-class XSLAtomicParam:
+class XSLAtomicParam(XSLParam):
     """A (saxon) XSL Atomic Parameter."""
 
     name: str | None
@@ -108,7 +108,7 @@ class XSLAtomicParam:
             xsl_proc.set_parameter(self.name, self.convert_to_saxon(proc))
 
 
-class XSLArrayParam:
+class XSLArrayParam(XSLParam):
     """A (saxon) XSL Array Parameter."""
 
     name: str | None
