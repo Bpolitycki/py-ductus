@@ -37,6 +37,17 @@ class InvalidFakeStep(Generic[types.TContent]):
         return "foo"  # type: ignore
 
 
+class FailingFakeStep(Generic[types.TContent]):
+    """An invalid fake step."""
+
+    def __init__(self) -> None:
+        """Initialize the step."""
+
+    def __call__(self, values: types.TContent) -> types.TContent:
+        """Process values with the step."""
+        return 1 / 0  # type: ignore
+
+
 @pytest.fixture()
 def xml_xsl_sample(tmp_path: Path) -> tuple[str, str, Path]:
     """Return a sample XML and XSL file."""

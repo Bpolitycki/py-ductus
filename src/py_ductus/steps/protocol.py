@@ -1,6 +1,6 @@
 from abc import abstractmethod  # noqa: D100
 from collections.abc import Iterable
-from typing import Generic, Protocol, runtime_checkable
+from typing import Generic, NamedTuple, Protocol, runtime_checkable
 
 from py_ductus.common import types
 
@@ -42,3 +42,15 @@ class Step(Protocol, Generic[types.TContent]):
             str: The name of the step.
         """
         ...
+
+
+class StepAlternative(NamedTuple):
+    """A step type, which allows to define a fallback step, which is used when the main step fails.
+
+    Attributes:
+        main (Step): The main step.
+        fallback (Step): The
+    """
+
+    main: Step
+    fallback: Step
